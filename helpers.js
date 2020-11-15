@@ -12,3 +12,13 @@ function expandMailType(mailType) {
       return "invalid mail type";
   }
 }
+
+function currencify(amount) {
+  amount = String(amount);
+  if (!amount.includes('.')) {
+    amount.concat('.');
+  }
+  return amount.padEnd(4, '0');
+}
+
+module.exports = {expandMailType, currencify};

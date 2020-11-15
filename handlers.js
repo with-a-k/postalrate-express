@@ -1,8 +1,18 @@
-function handlePostRate(request, response) {
-  const mailType = request.query.itemType;
-  const mailWeight = Number(request.query.weight.toInt);
+const helpers = require('./helpers.js');
 
-  console.log(mailType, mailWeight);
+function handlePostRate(request, response) {
+  const mailType = request.body.itemType;
+  const mailWeight = Number(request.body.weight);
+
+  if (typeof mailType == 'undefined' || isNaN(mailWeight)) {
+    const params = {type: 'invalid',
+      weight: 0,
+      result: 0.00,
+      message: 'Submission incomplete. Please try again.'
+    };
+
+    response.render('pages/postrate', params);
+  }
 
   getRate(response, mailType, mailWeight);
 }
@@ -70,9 +80,12 @@ function getRate(response, type, weight) {
     message = "Your mail type was not valid."
   }
 
-  const params = {type: type, weight: weight, result: result, message: message};
+  const params = {type: helpers.expandMailType(type),
+    weight: weight,
+    result: helpers.currencify(result),
+    message: message};
 
-  response.render('pages/result', params);
+  response.render('pages/postrate', params);
 }
 
 module.exports = { handlePostRate };
